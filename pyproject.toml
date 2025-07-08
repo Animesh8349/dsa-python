@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "dsa-python"
+version = "0.1.0"
+description = "Data Structures and Algorithms Implementation using Python coding language. This project is for educational purpose and is publicly available for contributions."
+authors = ["Animesh <reachanimesh8349@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "data_structures", from = "src"}, {include = "algorithms", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+graphviz = "^0.21"
+ipython = "^9.4.0"
+jupyter = "^1.1.1"
+matplotlib = "^3.10.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+pytest-benchmark = "^5.1.0"
+hypothesis = "^6.135.26"
+black = "^25.1.0"
+flake8 = "^7.3.0"
+mypy = "^1.16.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# pytest configuration
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra -q"
+markers = [
+    "unit_test: Unit test for a specific function or module",
+    "smoke_test: Basic test for sanity",
+    "integration_test: Integration test for multiple components",
+    "performance_test: Performance test for speed and efficiency",
+    "regression_test: Deep check for known features",
+    "slow_test: Time-consuming test",
+    "api_test: API endpoint test",
+]

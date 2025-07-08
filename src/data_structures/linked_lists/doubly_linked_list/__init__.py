@@ -1,0 +1,3 @@
+"""
+Doubly linked list implementation.
+"""
