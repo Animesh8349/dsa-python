@@ -1,0 +1,37 @@
+# CODEOWNERS file for dsa-python project
+# This file defines who owns specific parts of the codebase.
+# Each line is a file pattern followed by one or more owners.
+# More info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global ownership - Animesh owns everything by default
+* @reachanimesh8349
+
+# Core project configuration files
+pyproject.toml @reachanimesh8349
+poetry.lock @reachanimesh8349
+.gitignore @reachanimesh8349
+
+# Documentation
+README.md @reachanimesh8349
+docs/ @reachanimesh8349
+
+# Source code structure
+src/data_structures/ @reachanimesh8349
+src/algorithms/ @reachanimesh8349
+
+# Tests
+tests/ @reachanimesh8349
+
+# GitHub configuration and workflows
+.github/ @reachanimesh8349
+.github/CODEOWNERS @reachanimesh8349
+
+# CI/CD and automation
+.github/workflows/ @reachanimesh8349
+
+# Example entries for future collaborators (commented out):
+# If you add collaborators in the future, uncomment and modify these:
+# src/algorithms/sorting/ @contributor-username
+# src/algorithms/searching/ @contributor-username
+# src/data_structures/trees/ @contributor-username
+# src/data_structures/graphs/ @contributor-username
