@@ -4,30 +4,30 @@
 # More info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Global ownership - Animesh owns everything by default
-* @reachanimesh8349
+* @Animesh8349
 
 # Core project configuration files
-pyproject.toml @reachanimesh8349
-poetry.lock @reachanimesh8349
-.gitignore @reachanimesh8349
+pyproject.toml @Animesh8349
+poetry.lock @Animesh8349
+.gitignore @Animesh8349
 
 # Documentation
-README.md @reachanimesh8349
-docs/ @reachanimesh8349
+README.md @Animesh8349
+docs/ @Animesh8349
 
 # Source code structure
-src/data_structures/ @reachanimesh8349
-src/algorithms/ @reachanimesh8349
+src/data_structures/ @Animesh8349
+src/algorithms/ @Animesh8349
 
 # Tests
-tests/ @reachanimesh8349
+tests/ @Animesh8349
 
 # GitHub configuration and workflows
-.github/ @reachanimesh8349
-.github/CODEOWNERS @reachanimesh8349
+.github/ @Animesh8349
+.github/CODEOWNERS @Animesh8349
 
 # CI/CD and automation
-.github/workflows/ @reachanimesh8349
+.github/workflows/ @Animesh8349
 
 # Example entries for future collaborators (commented out):
 # If you add collaborators in the future, uncomment and modify these:
