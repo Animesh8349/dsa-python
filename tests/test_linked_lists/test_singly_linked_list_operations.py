@@ -1,121 +1,175 @@
-"""
-Unit tests for singly linked list operations.
-"""
-
-from data_structures.linked_lists.singly_linked_list.singly_linked_list import (
+import pytest
+from src.data_structures.linked_lists.singly_linked_list.singly_linked_list_operations import (
+    MultipleElementsHandler,
     SinglyLinkedList,
     SinglyLinkedListNode,
-)
-from data_structures.linked_lists.singly_linked_list.singly_linked_list_operations import (
     initialize_sll,
     insert_sll_element,
+    insert_sll_first_element,
+    insert_sll_nth_element,
+    delete_sll_first_element,
     delete_sll_last_element,
+    delete_sll_nth_element,
+    delete_sll_multiple_elements,
+    insert_sll_multiple_elements,
+    get_element_at_index,
+    shallow_clear_singly_linked_list,
+    deep_clear_singly_linked_list,
 )
 
 
-def test_initialize_singly_linked_list():
-    """Test singly linked list initialization."""
-    sll = SinglyLinkedList()
-    result = initialize_sll(sll, "first")
+class TestInsertOperations:
+    def test_initialize_and_insert(self):
+        sll = SinglyLinkedList()
+        node = initialize_sll(sll, "init")
+        assert node.data == "init"
+        assert sll.head == node
 
-    assert result is not None
-    assert result.data == "first"
-    assert sll.head is not None
-    assert sll.head.data == "first"
-    assert sll.tail == sll.head
-    assert sll.size == 1
-    assert sll.sll_initialized is True
-    print("✓ Initialize SLL test passed")
+        node2 = insert_sll_element(sll, "second")
+        assert node2.data == "second"
+        assert sll.tail == node2
 
+    def test_insert_first_and_nth(self):
+        sll = SinglyLinkedList()
+        insert_sll_element(sll, "b")
+        insert_sll_element(sll, "c")
 
-def test_insert_elements():
-    """Test inserting multiple elements."""
-    sll = SinglyLinkedList()
+        node = insert_sll_first_element(sll, "a")
+        assert sll.head == node
 
-    # Insert first element
-    insert_sll_element(sll, "first")
-    assert sll.size == 1
-    assert sll.head.data == "first"
-    assert sll.tail.data == "first"
-
-    # Insert second element
-    insert_sll_element(sll, "second")
-    assert sll.size == 2
-    assert sll.head.data == "first"
-    assert sll.tail.data == "second"
-    assert sll.head.next == sll.tail
-
-    # Insert third element
-    insert_sll_element(sll, "third")
-    assert sll.size == 3
-    assert sll.tail.data == "third"
-
-    print("✓ Insert elements test passed")
+        insert_sll_nth_element(sll, "middle", 2)
+        node = get_element_at_index(2, sll)
+        assert node is not None and node.data == "middle"
 
 
-def test_delete_last_element():
-    """Test deleting the last element from the list."""
-    singly_linked_list = SinglyLinkedList()
+class TestDeleteOperations:
+    def test_delete_first_and_last(self):
+        sll = SinglyLinkedList()
+        insert_sll_element(sll, "x")
+        insert_sll_element(sll, "y")
 
-    # Test deletion from empty list
-    result = delete_sll_last_element(singly_linked_list)
-    assert result is None
+        deleted_first = delete_sll_first_element(sll)
+        assert deleted_first is not None and deleted_first.data == "x"
+        deleted_last = delete_sll_last_element(sll)
+        assert deleted_last is not None and deleted_last.data == "y"
+        assert sll.size == 0
 
-    # Add elements and test deletion
-    insert_sll_element(singly_linked_list, "first")
-    insert_sll_element(singly_linked_list, "second")
-    insert_sll_element(singly_linked_list, "third")
+    def test_delete_nth(self):
+        sll = SinglyLinkedList()
+        for val in ["a", "b", "c", "d"]:
+            insert_sll_element(sll, val)
 
-    # Delete last element
-    deleted = delete_sll_last_element(singly_linked_list)
-    assert deleted.data == "third"
-    assert singly_linked_list.size == 2
-    assert singly_linked_list.tail.data == "second"
-
-    # Delete second-to-last element
-    deleted = delete_sll_last_element(singly_linked_list)
-    assert deleted.data == "second"
-    assert singly_linked_list.size == 1
-    assert singly_linked_list.tail.data == "first"
-    assert singly_linked_list.head == singly_linked_list.tail
-
-    # Delete last remaining element
-    deleted = delete_sll_last_element(singly_linked_list)
-    assert deleted.data == "first"
-    assert singly_linked_list.size == 0
-    assert singly_linked_list.head is None
-    assert singly_linked_list.tail is None
-    assert singly_linked_list.sll_initialized is False
-
-    print("✓ Delete last element test passed")
+        deleted = delete_sll_nth_element(sll, 3)
+        assert deleted is not None
+        assert deleted.data == "c"
+        assert sll.size == 3
+        node = get_element_at_index(3, sll)
+        assert node is not None and node.data == "d"
 
 
-def test_error_conditions():
-    """Test error conditions."""
-    try:
-        initialize_sll(None, "data")
-        assert False, "Should have raised ValueError"
-    except ValueError as e:
-        assert str(e) == "Singly linked list cannot be None"
+class TestMultipleElementDeletion:
+    def test_delete_multiple(self):
+        sll = SinglyLinkedList()
+        for i in range(1, 6):
+            insert_sll_element(sll, f"item{i}")
 
-    try:
-        insert_sll_element(None, "data")
-        assert False, "Should have raised ValueError"
-    except ValueError as e:
-        assert str(e) == "Singly linked list cannot be None"
+        indices = [1, 3, 6]
 
-    try:
-        delete_sll_last_element(None)
-        assert False, "Should have raised ValueError"
-    except ValueError as e:
-        assert str(e) == "Singly linked list cannot be None"
-
-    print("✓ Error conditions test passed")
+        deleted, skipped = delete_sll_multiple_elements(sll, indices)
+        assert len(deleted) == 2
+        assert len(skipped) == 1
 
 
-if __name__ == "__main__":
-    test_initialize_singly_linked_list()
-    test_insert_elements()
-    test_delete_last_element()
-    test_error_conditions()
-    print("\n🎉 All tests passed!")
+class TestInsertMultipleElements:
+    def test_insert_multiple(self):
+        sll = SinglyLinkedList()
+        for val in ["start", "between", "almost-end"]:
+            insert_sll_element(sll, val)
+
+        handlers = [
+            MultipleElementsHandler(index=1, element="start"),
+            MultipleElementsHandler(index=2, element="between"),
+            MultipleElementsHandler(index=4, element="almost-end"),
+            MultipleElementsHandler(index=9, element="out-of-bound"),
+        ]
+
+        inserted, skipped = insert_sll_multiple_elements(sll, handlers)
+
+        assert [h.data for h in inserted] == ["start", "between", "almost-end"]
+        assert [h.element for h in skipped] == ["out-of-bound"]
+
+        node1 = get_element_at_index(1, sll)
+        assert node1 is not None and node1.data == "start"
+        node2 = get_element_at_index(2, sll)
+        assert node2 is not None and node2.data == "between"
+        node3 = get_element_at_index(4, sll)
+        assert node3 is not None and node3.data == "almost-end"
+
+
+class TestGetElementAtIndex:
+    def test_valid_index(self):
+        sll = SinglyLinkedList()
+        node1 = SinglyLinkedListNode("a")
+        node2 = SinglyLinkedListNode("b")
+        node1.next = node2
+        sll.head = node1
+        sll.tail = node2
+        sll.size = 2
+        sll.sll_initialized = True
+
+        result1 = get_element_at_index(1, sll)
+        assert result1 is not None
+        assert result1.data == "a"
+
+        result2 = get_element_at_index(2, sll)
+        assert result2 is not None
+        assert result2.data == "b"
+
+    def test_invalid_index_bounds(self):
+        sll = SinglyLinkedList()
+        sll.head = SinglyLinkedListNode("a")
+        sll.size = 1
+        sll.sll_initialized = True
+
+        with pytest.raises(IndexError):
+            get_element_at_index(0, sll)
+        with pytest.raises(IndexError):
+            get_element_at_index(2, sll)
+
+    def test_uninitialized_or_none_sll(self):
+        assert get_element_at_index(1, SinglyLinkedList()) is None
+
+        sll = SinglyLinkedList()
+        sll.sll_initialized = False
+        assert get_element_at_index(1, sll) is None
+
+
+class TestClearFunctions:
+    def test_shallow_clear(self):
+        sll = SinglyLinkedList()
+        sll.head = SinglyLinkedListNode("x")
+        sll.tail = sll.head
+        sll.size = 1
+        sll.sll_initialized = True
+
+        shallow_clear_singly_linked_list(sll)
+        assert sll.head is None
+        assert sll.tail is None
+        assert sll.size == 0
+        assert sll.sll_initialized is False
+
+    def test_deep_clear(self):
+        sll = SinglyLinkedList()
+        node1 = SinglyLinkedListNode("a")
+        node2 = SinglyLinkedListNode("b")
+        node1.next = node2
+        sll.head = node1
+        sll.tail = node2
+        sll.size = 2
+        sll.sll_initialized = True
+
+        deep_clear_singly_linked_list(sll)
+        assert sll.head is None
+        assert sll.tail is None
+        assert sll.size == 0
+        assert sll.sll_initialized is False
