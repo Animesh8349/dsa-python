@@ -1,5 +1,8 @@
+from typing import Any
+
+
 class MultipleElementsHandler:
-    def __init__(self, index, element):
+    def __init__(self, index, element: Any):
         self.index = index
         self.element = element
 
