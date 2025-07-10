@@ -1,9 +1,9 @@
-from .singly_linked_list import SinglyLinkedList, SinglyLinkedListNode
-from ..linked_list_utilities import (
+from .singly_linked_list import (
+    SinglyLinkedList,
+    SinglyLinkedListNode,
     MultipleElementsHandler,
     sort_list_multiple_elements_handlers,
 )
-
 from typing import Any, Optional
 
 
