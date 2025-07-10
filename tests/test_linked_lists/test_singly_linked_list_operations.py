@@ -1,6 +1,5 @@
 import pytest
 from src.data_structures.linked_lists.singly_linked_list.singly_linked_list_operations import (
-    MultipleElementsHandler,
     SinglyLinkedList,
     SinglyLinkedListNode,
     initialize_sll,
@@ -15,6 +14,9 @@ from src.data_structures.linked_lists.singly_linked_list.singly_linked_list_oper
     get_element_at_index,
     shallow_clear_singly_linked_list,
     deep_clear_singly_linked_list,
+)
+from src.data_structures.linked_lists.linked_list_utilities import (
+    MultipleElementsHandler
 )
 
 
