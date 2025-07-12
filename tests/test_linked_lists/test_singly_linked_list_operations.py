@@ -1,7 +1,9 @@
 import pytest
-from src.data_structures.linked_lists.singly_linked_list.singly_linked_list_operations import (
+from src.data_structures.linked_lists.singly_linked_list.singly_linked_list import (
     SinglyLinkedList,
     SinglyLinkedListNode,
+)
+from src.data_structures.linked_lists.singly_linked_list.singly_linked_list_operations import (
     initialize_sll,
     insert_sll_element,
     insert_sll_first_element,
