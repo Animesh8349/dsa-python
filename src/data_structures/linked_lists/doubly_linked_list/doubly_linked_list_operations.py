@@ -30,11 +30,17 @@ def initialize_dll(dll: DoublyLinkedList, data: Any) -> Optional[DoublyLinkedLis
     Returns:
         Optional[DoublyLinkedListNode]: The created node, or None if initialization failed
 
+    Raises:
+        ValueError: If the dll parameter is None
+
     Example:
         >>> dll = DoublyLinkedList()
         >>> node = initialize_dll(dll, "first")
         >>> print(dll.size)  # Output: 1
     """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
     first_node = DoublyLinkedListNode(data)
 
     dll.head = first_node
@@ -116,6 +122,7 @@ def insert_dll_nth_element(
 
     Raises:
         ValueError: If the dll parameter is None or list is not initialized
+        IndexError: If the index is out of bounds
 
     Example:
         >>> dll = DoublyLinkedList()
@@ -132,22 +139,40 @@ def insert_dll_nth_element(
             "DoublyLinkedList must be initialized before inserting elements"
         )
 
-    new_node = None
-    current = dll.head
+    if index < 1 or index > dll.size + 1:
+        raise IndexError("Index out of bounds")
 
+    # Handle insertion at the beginning
+    if index == 1:
+        new_node = DoublyLinkedListNode(data)
+        if dll.head is not None:
+            new_node.next = dll.head
+            dll.head.prev = new_node
+        dll.head = new_node
+        if dll.size == 0:
+            dll.tail = new_node
+        dll.size += 1
+        return new_node
+
+    # Handle insertion at the end
+    if index == dll.size + 1:
+        return insert_dll_element(dll, data)
+
+    # Handle insertion in the middle
+    current = dll.head
     for _ in range(index - 2):
         current = current.next if current else None
 
     if current is not None and current.next is not None:
         new_node = DoublyLinkedListNode(data)
-
         new_node.next = current.next
         new_node.prev = current
         current.next.prev = new_node
         current.next = new_node
         dll.size += 1
+        return new_node
 
-    return new_node
+    return None
 
 
 def insert_dll_multiple_elements(
@@ -197,51 +222,18 @@ def insert_dll_multiple_elements(
 
     inserted = []
     skipped = []
-    current = dll.head
-    current_index = 1
-    first_inserted = False
 
     for handler in sorted_elements_with_indices:
         if handler.index < 1 or handler.index > dll.size + 1:
             skipped.append(handler.index)
             continue
 
-        new_node = DoublyLinkedListNode(handler.element)
-
-        if not first_inserted:
-            for _ in range(handler.index - 1):
-                current = current.next if current else None
-                current_index += 1
-
-            if current is not None and current.next is not None:
-                current.next.prev = new_node
-                new_node.next = current.next.prev
-                current.next = new_node
-                new_node.prev = current
-
-                dll.size += 1
-                first_inserted = True
-                inserted.append(new_node)
-
-                current = new_node
-                current_index += 1
+        # Use the single element insertion function for consistency
+        new_node = insert_dll_nth_element(dll, handler.element, handler.index)
+        if new_node is not None:
+            inserted.append(new_node)
         else:
-            for _ in range(handler.index - current_index):
-                current = current.next if current else None
-                current_index += 1
-
-            if current is not None and current.next is not None:
-                current.next.prev = new_node
-                new_node.next = current.next.prev
-                current.next = new_node
-                new_node.prev = current
-
-                dll.size += 1
-                first_inserted = True
-                inserted.append(new_node)
-
-                current = new_node
-                current_index += 1
+            skipped.append(handler.index)
 
     return (inserted, skipped)
 
@@ -392,22 +384,20 @@ def delete_dll_tail_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListN
     if not dll.dll_initialized or dll.size == 0:
         raise ValueError("DoublyLinkedList must be initialized and not empty")
 
-    deleted_node = None
+    deleted_node = dll.tail
 
     if dll.size == 1:
-        deleted_node = dll.head
         dll.head = None
         dll.tail = None
         dll.size = 0
         dll.dll_initialized = False
     else:
-        deleted_node = dll.tail
         if dll.tail is not None and dll.tail.prev is not None:
             new_tail = dll.tail.prev
-            new_tail.next = None  # ✅ Add this
+            new_tail.next = None
             dll.tail.prev = None
             dll.tail = new_tail
-            dll.size -= 1  # ✅ Fix this
+            dll.size -= 1
 
     return deleted_node
 
@@ -444,22 +434,20 @@ def delete_dll_head_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListN
     if not dll.dll_initialized or dll.size == 0:
         raise ValueError("DoublyLinkedList must be initialized and not empty")
 
+    deleted_node = dll.head
+
     if dll.size == 1:
-        deleted_node = dll.head
         dll.head = None
         dll.tail = None
         dll.size = 0
         dll.dll_initialized = False
     else:
-        deleted_node = dll.head
-
-        if dll.head is not None:
+        if dll.head is not None and dll.head.next is not None:
             new_head = dll.head.next
-
-            dll.head.prev = None
+            new_head.prev = None
             dll.head.next = None
-            dll.size -= 1
             dll.head = new_head
+            dll.size -= 1
 
     return deleted_node
 
@@ -503,37 +491,32 @@ def delete_dll_nth_element(
     if index < 1 or index > dll.size:
         raise IndexError("Index out of bounds")
 
-    deleted_node = None
-
+    # Handle deletion of the only element
     if dll.size == 1:
-        deleted_node = dll.head
-        dll.head = None
-        dll.tail = None
-        dll.size = 0
-        dll.dll_initialized = False
-    else:
-        current = dll.head
+        return delete_dll_head_element(dll)
 
-        if dll.head is not None:
-            for _ in range(
-                index - 1
-            ):  # 1 because my linked list's indexing starts from 1
-                current = current.next if current else None
+    # Handle deletion of the first element
+    if index == 1:
+        return delete_dll_head_element(dll)
 
-        deleted_node = current
+    # Handle deletion of the last element
+    if index == dll.size:
+        return delete_dll_tail_element(dll)
 
-        if (
-            current is not None
-            and current.next is not None
-            and current.prev is not None
-        ):
-            current.prev.next = current.next
-            current.next.prev = current.prev
-            current.next = None
-            current.prev = None
-            dll.size -= 1
+    # Handle deletion in the middle
+    current = dll.head
+    for _ in range(index - 1):
+        current = current.next if current else None
 
-    return deleted_node
+    if current is not None and current.prev is not None and current.next is not None:
+        current.prev.next = current.next
+        current.next.prev = current.prev
+        current.next = None
+        current.prev = None
+        dll.size -= 1
+        return current
+
+    return None
 
 
 def delete_dll_multiple_elements(
@@ -544,7 +527,8 @@ def delete_dll_multiple_elements(
 
     This function processes a list of handlers containing indices and deletes
     the corresponding elements from the list. Elements are sorted by index
-    before deletion to maintain proper ordering. Invalid indices are skipped.
+    in descending order before deletion to maintain proper ordering.
+    Invalid indices are skipped.
 
     Args:
         dll (DoublyLinkedList): The doubly linked list to delete from
@@ -553,7 +537,7 @@ def delete_dll_multiple_elements(
 
     Returns:
         tuple[list[DoublyLinkedListNode], list[int]]: A tuple containing:
-            - List of successsfully deleted nodes
+            - List of successfully deleted nodes
             - List of indices that were skipped due to being out of bounds
 
     Raises:
@@ -579,55 +563,24 @@ def delete_dll_multiple_elements(
     if not dll.dll_initialized or dll.size == 0:
         raise ValueError("DoublyLinkedList must be initialized and not empty")
 
-    sorted_elements_with_indices = sort_list_multiple_elements_handlers(
-        elements_with_indices
+    # Sort in descending order to maintain proper indices during deletion
+    sorted_elements_with_indices = sorted(
+        elements_with_indices, key=lambda x: x.index, reverse=True
     )
 
     deleted: list[DoublyLinkedListNode] = []
     skipped: list[int] = []
-    current = dll.head
-    current_index = 1
-    first_deleted = False
 
     for handler in sorted_elements_with_indices:
         if handler.index < 1 or handler.index > dll.size:
             skipped.append(handler.index)
             continue
 
-        if not first_deleted:
-            for _ in range(handler.index - 1):
-                current = current.next if current is not None else None
-                current_index += 1
-
-            deleted_node = current
-            if (
-                deleted_node is not None
-                and deleted_node.prev is not None
-                and deleted_node.next is not None
-            ):
-                deleted_node.prev.next = deleted_node.next
-                deleted_node.next.prev = deleted_node.prev
-                deleted_node.next = None
-                deleted_node.prev = None
-                dll.size -= 1
-                deleted.append(deleted_node)
-                first_deleted = True
+        # Use the single element deletion function for consistency
+        deleted_node = delete_dll_nth_element(dll, handler.index)
+        if deleted_node is not None:
+            deleted.append(deleted_node)
         else:
-            for _ in range(handler.index - current_index):
-                current = current.next if current is not None else None
-                current_index += 1
-
-            deleted_node = current
-            if (
-                deleted_node is not None
-                and deleted_node.prev is not None
-                and deleted_node.next is not None
-            ):
-                deleted_node.prev.next = deleted_node.next
-                deleted_node.next.prev = deleted_node.prev
-                deleted_node.next = None
-                deleted_node.prev = None
-                dll.size -= 1
-                deleted.append(deleted_node)
+            skipped.append(handler.index)
 
     return (deleted, skipped)
