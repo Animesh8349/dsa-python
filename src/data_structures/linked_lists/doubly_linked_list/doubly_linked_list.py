@@ -6,8 +6,8 @@ class DoublyLinkedList:
         self.head: Optional[DoublyLinkedListNode] = None
         self.tail: Optional[DoublyLinkedListNode] = None
         self.size = 0
-        self.sll_initialized = False
-        self.sll_node: Optional[DoublyLinkedListNode] = None
+        self.dll_initialized = False
+        self.dll_node: Optional[DoublyLinkedListNode] = None
 
 
 class DoublyLinkedListNode:
