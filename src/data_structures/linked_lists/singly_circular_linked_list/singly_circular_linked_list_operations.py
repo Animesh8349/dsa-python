@@ -374,6 +374,7 @@ def deep_clear_singly_linked_list(sll: SinglyCircularLinkedList) -> None:
         next_node = current.next
         current.next = None
         current = next_node
+        sll.size -= 1
 
         if sll.size == 1:
             sll.tail.next = None
