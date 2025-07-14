@@ -1,4 +1,7 @@
-from .singly_linked_list import SinglyLinkedList, SinglyLinkedListNode
+from .singly_circular_linked_list import (
+    SinglyCircularLinkedList,
+    SinglyCircularLinkedListNode,
+)
 from ..linked_list_utilities import (
     MultipleElementsHandler,
     sort_list_multiple_elements_handlers,
@@ -7,12 +10,14 @@ from ..linked_list_utilities import (
 from typing import Any, Optional
 
 
-def initialize_sll(sll: SinglyLinkedList, data: Any) -> SinglyLinkedListNode:
+def initialize_sll(
+    sll: SinglyCircularLinkedList, data: Any
+) -> SinglyCircularLinkedListNode:
     """
-    Initialize a singly linked list with the first element.
+    Initialize a singly circular linked list with the first element.
 
     Args:
-        sll: The singly linked list to initialize
+        sll: The singly circular linked list to initialize
         data: The data for the first node
 
     Returns:
@@ -22,9 +27,9 @@ def initialize_sll(sll: SinglyLinkedList, data: Any) -> SinglyLinkedListNode:
         ValueError: If sll is None
     """
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
-    sll.head = SinglyLinkedListNode(data)
+    sll.head = SinglyCircularLinkedListNode(data)
     sll.sll_initialized = True
     sll.tail = sll.head
     sll.size = 1
@@ -32,12 +37,14 @@ def initialize_sll(sll: SinglyLinkedList, data: Any) -> SinglyLinkedListNode:
     return sll.head
 
 
-def insert_sll_element(sll: SinglyLinkedList, element: Any) -> SinglyLinkedListNode:
+def insert_sll_element(
+    sll: SinglyCircularLinkedList, element: Any
+) -> SinglyCircularLinkedListNode:
     """
-    Insert an element at the end of the singly linked list.
+    Insert an element at the end of the singly circular linked list.
 
     Args:
-        sll: The singly linked list to insert into
+        sll: The singly circular linked list to insert into
         element: The data to insert
 
     Returns:
@@ -47,15 +54,16 @@ def insert_sll_element(sll: SinglyLinkedList, element: Any) -> SinglyLinkedListN
         ValueError: If sll is None
     """
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     if not sll.sll_initialized:
         return initialize_sll(sll, element)
     else:
-        new_node = SinglyLinkedListNode(element)
+        new_node = SinglyCircularLinkedListNode(element)
 
         if sll.tail is not None:
-            sll.tail.next = new_node  # type: ignore
+            sll.tail.next = new_node
+            new_node.next = sll.head
 
         sll.tail = new_node
         sll.size += 1
@@ -64,27 +72,29 @@ def insert_sll_element(sll: SinglyLinkedList, element: Any) -> SinglyLinkedListN
 
 
 def insert_sll_first_element(
-    sll: SinglyLinkedList, element: Any
-) -> SinglyLinkedListNode:
+    sll: SinglyCircularLinkedList, element: Any
+) -> SinglyCircularLinkedListNode:
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     if not sll.sll_initialized:
         return initialize_sll(sll, element)
 
-    new_node = SinglyLinkedListNode(element)
-    new_node.next = sll.head  # type: ignore
+    new_node = SinglyCircularLinkedListNode(element)
+
+    new_node.next = sll.head
     sll.head = new_node
+    sll.tail.next = new_node
     sll.size += 1
 
     return new_node
 
 
 def insert_sll_nth_element(
-    sll: SinglyLinkedList, element: Any, insertion_index: int
-) -> SinglyLinkedListNode:
+    sll: SinglyCircularLinkedList, element: Any, insertion_index: int
+) -> SinglyCircularLinkedListNode:
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     if insertion_index <= 0 or insertion_index > sll.size + 1:
         raise IndexError("Insertion index out of bounds")
@@ -105,7 +115,7 @@ def insert_sll_nth_element(
     if current is None:
         raise IndexError("Insertion index out of bounds")
 
-    new_node = SinglyLinkedListNode(element)
+    new_node = SinglyCircularLinkedListNode(element)
     new_node.next = current.next
     current.next = new_node  # type: ignore
     sll.size += 1
@@ -114,12 +124,12 @@ def insert_sll_nth_element(
 
 
 def insert_sll_multiple_elements(
-    sll: SinglyLinkedList, elements_with_indices: list[MultipleElementsHandler]
-) -> tuple[list[SinglyLinkedListNode], list[MultipleElementsHandler]]:
+    sll: SinglyCircularLinkedList, elements_with_indices: list[MultipleElementsHandler]
+) -> tuple[list[SinglyCircularLinkedListNode], list[MultipleElementsHandler]]:
     if sll is None or sll.head is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
-    results: list[SinglyLinkedListNode] = []
+    results: list[SinglyCircularLinkedListNode] = []
     skipped: list[MultipleElementsHandler] = []
 
     for handler in sort_list_multiple_elements_handlers(elements_with_indices):
@@ -141,15 +151,19 @@ def insert_sll_multiple_elements(
             continue
         else:  # For other indices, we add the element at the specified position
             if current is None:
-                raise ValueError("Singly linked list is empty, cannot add element")
+                raise ValueError(
+                    "Singly circular linked list is empty, cannot add element"
+                )
 
             for _ in range(handler.index - 2):
                 if current is None:
-                    raise ValueError("Singly linked list cannot be Uninitialized")
+                    raise ValueError(
+                        "Singly circular linked list cannot be Uninitialized"
+                    )
                 else:
                     current = current.next
 
-            new_node = SinglyLinkedListNode(handler.element)
+            new_node = SinglyCircularLinkedListNode(handler.element)
             new_node.next = current.next if current else None
             current.next = new_node  # type: ignore
             sll.size += 1
@@ -158,9 +172,11 @@ def insert_sll_multiple_elements(
     return (results, skipped)
 
 
-def delete_sll_first_element(sll: SinglyLinkedList) -> Optional[SinglyLinkedListNode]:
+def delete_sll_first_element(
+    sll: SinglyCircularLinkedList,
+) -> Optional[SinglyCircularLinkedListNode]:
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     if not sll.sll_initialized or sll.head is None:
         return None
@@ -169,19 +185,23 @@ def delete_sll_first_element(sll: SinglyLinkedList) -> Optional[SinglyLinkedList
     sll.head = sll.head.next
     sll.size -= 1
 
-    if sll.size == 0:
+    if sll.size == 1:
+        sll.tail.next = None
+    elif sll.size == 0:
         sll.tail = None
         sll.sll_initialized = False
 
     return deleted_node
 
 
-def delete_sll_last_element(sll: SinglyLinkedList) -> Optional[SinglyLinkedListNode]:
+def delete_sll_last_element(
+    sll: SinglyCircularLinkedList,
+) -> Optional[SinglyCircularLinkedListNode]:
     """
-    Delete the last element from the singly linked list.
+    Delete the last element from the singly circular linked list.
 
     Args:
-        sll: The singly linked list to delete from
+        sll: The singly circular linked list to delete from
 
     Returns:
         The deleted node, or None if the list is empty
@@ -190,7 +210,7 @@ def delete_sll_last_element(sll: SinglyLinkedList) -> Optional[SinglyLinkedListN
         ValueError: If sll is None
     """
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     if not sll.sll_initialized or sll.head is None:
         return None
@@ -218,18 +238,21 @@ def delete_sll_last_element(sll: SinglyLinkedList) -> Optional[SinglyLinkedListN
     deleted_node = sll.tail
 
     if current is not None:
-        current.next = None
+        current.next = deleted_node.next
         sll.tail = current
         sll.size -= 1
+
+    if sll.size == 1:
+        sll.tail.next = None
 
     return deleted_node
 
 
 def delete_sll_nth_element(
-    sll: SinglyLinkedList, deletion_index: int
-) -> Optional[SinglyLinkedListNode]:
+    sll: SinglyCircularLinkedList, deletion_index: int
+) -> Optional[SinglyCircularLinkedListNode]:
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     if deletion_index <= 0 or deletion_index > sll.size:
         raise IndexError("Deletion index out of bounds")
@@ -259,10 +282,10 @@ def delete_sll_nth_element(
 
 
 def delete_sll_multiple_elements(
-    sll: SinglyLinkedList, indices: list[int]
+    sll: SinglyCircularLinkedList, indices: list[int]
 ) -> tuple[list[MultipleElementsHandler], list[int]]:
     if sll is None or sll.head is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     results: list[MultipleElementsHandler] = []
     skipped: list[int] = []
@@ -285,12 +308,14 @@ def delete_sll_multiple_elements(
 
             for _ in range(index - 2):
                 if current is None:
-                    raise ValueError("Singly linked list cannot be Uninitialized")
+                    raise ValueError(
+                        "Singly circular linked list cannot be Uninitialized"
+                    )
 
                 current = current.next
 
             if current is None or current.next is None:
-                raise ValueError("Singly linked list cannot be Uninitialized")
+                raise ValueError("Singly circular linked list cannot be Uninitialized")
 
             deleted_node = current.next
             current.next = deleted_node.next
@@ -305,8 +330,8 @@ def delete_sll_multiple_elements(
 
 
 def get_element_at_index(
-    index: int, sll: SinglyLinkedList
-) -> Optional[SinglyLinkedListNode]:
+    index: int, sll: SinglyCircularLinkedList
+) -> Optional[SinglyCircularLinkedListNode]:
     if sll is None or not sll.sll_initialized or sll.head is None:
         return None
 
@@ -322,28 +347,39 @@ def get_element_at_index(
     return current
 
 
-def shallow_clear_singly_linked_list(sll: SinglyLinkedList) -> None:
+def shallow_clear_singly_linked_list(sll: SinglyCircularLinkedList) -> None:
     """
-    Clear the singly linked list, removing all elements.
+    Clear the singly circular linked list, removing all elements.
 
     Args:
-        sll: The singly linked list to clear
+        sll: The singly circular linked list to clear
     """
     if sll is None:
-        raise ValueError("Singly linked list cannot be Uninitialized")
+        raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     sll.head = None
+    sll.tail.next = None
     sll.tail = None
     sll.size = 0
     sll.sll_initialized = False
 
 
-def deep_clear_singly_linked_list(sll: SinglyLinkedList) -> None:
+def deep_clear_singly_linked_list(sll: SinglyCircularLinkedList) -> None:
+    if sll is None or not sll.sll_initialized or sll.head is None:
+        return
+
     current = sll.head
+
     while current:
         next_node = current.next
         current.next = None
         current = next_node
+        sll.size -= 1
+
+        if sll.size == 1:
+            sll.tail.next = None
+        else:
+            sll.tail.next = current
 
     sll.head = None
     sll.tail = None
