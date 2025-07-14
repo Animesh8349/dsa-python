@@ -13,4 +13,3 @@ class SinglyCircularLinkedList:
         self.tail: Optional[SinglyCircularLinkedListNode] = None
         self.size = 0
         self.sll_initialized = False
-        self.sll_node: Optional[SinglyCircularLinkedListNode] = None
