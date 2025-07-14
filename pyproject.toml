@@ -17,7 +17,7 @@ matplotlib = "^3.10.3"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
 pytest-benchmark = "^5.1.0"
-hypothesis = "^6.135.26"
+hypothesis = "^6.135.29"
 black = "^25.1.0"
 flake8 = "^7.3.0"
 mypy = "^1.16.1"
