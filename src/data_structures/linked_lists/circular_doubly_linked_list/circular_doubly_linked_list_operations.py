@@ -127,7 +127,10 @@ def insert_cdll_nth_element(
 
     new_node = CircularDoublyLinkedListNode(element)
     new_node.next = current.next
+    new_node.prev = current
     current.next = new_node  # type: ignore
+    if new_node.next:  # Update the prev pointer of the following node
+        new_node.next.prev = new_node
     cdll.size += 1
 
     return new_node
