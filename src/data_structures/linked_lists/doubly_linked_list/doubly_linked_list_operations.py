@@ -86,19 +86,18 @@ def insert_dll_element(
         new_node = initialize_dll(dll, data)
         return new_node
 
-    if dll.size == 1 and dll.head is not None:
-        new_node = DoublyLinkedListNode(data)
+    new_node = DoublyLinkedListNode(data)
+
+    if dll.size == 1:
         dll.head.next = new_node
         new_node.prev = dll.head
-        dll.tail = new_node
-        dll.size += 1
     else:
         if dll.tail is not None:
-            new_node = DoublyLinkedListNode(data)
             dll.tail.next = new_node
             new_node.prev = dll.tail
-            dll.tail = new_node
-            dll.size += 1
+
+    dll.tail = new_node
+    dll.size += 1
 
     return new_node
 
@@ -144,15 +143,7 @@ def insert_dll_nth_element(
 
     # Handle insertion at the beginning
     if index == 1:
-        new_node = DoublyLinkedListNode(data)
-        if dll.head is not None:
-            new_node.next = dll.head
-            dll.head.prev = new_node
-        dll.head = new_node
-        if dll.size == 0:
-            dll.tail = new_node
-        dll.size += 1
-        return new_node
+        return insert_dll_nth_element(dll, data, index)
 
     # Handle insertion at the end
     if index == dll.size + 1:
@@ -160,6 +151,7 @@ def insert_dll_nth_element(
 
     # Handle insertion in the middle
     current = dll.head
+
     for _ in range(index - 2):
         current = current.next if current else None
 
@@ -236,6 +228,236 @@ def insert_dll_multiple_elements(
             skipped.append(handler.index)
 
     return (inserted, skipped)
+
+
+def delete_dll_tail_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListNode]:
+    """
+    Delete the tail (last) element from the doubly linked list.
+
+    This function removes the last node from the list and properly updates
+    the tail reference and node connections. If the list becomes empty,
+    it is marked as uninitialized.
+
+    Args:
+        dll (DoublyLinkedList): The doubly linked list to delete from
+
+    Returns:
+        Optional[DoublyLinkedListNode]: The deleted node, or None if deletion failed
+
+    Raises:
+        ValueError: If the dll parameter is None, or if the list is not
+            initialized or is empty
+
+    Example:
+        >>> dll = DoublyLinkedList()
+        >>> initialize_dll(dll, "first")
+        >>> insert_dll_element(dll, "second")
+        >>> deleted = delete_dll_tail_element(dll)
+        >>> print(deleted.data)  # Output: second
+        >>> print(dll.size)  # Output: 1
+    """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
+    if not dll.dll_initialized or dll.size == 0:
+        raise ValueError("DoublyLinkedList must be initialized and not empty")
+
+    deleted_node = dll.tail
+
+    if dll.size == 1:
+        dll.head = None
+        dll.tail = None
+        dll.size = 0
+        dll.dll_initialized = False
+    else:
+        if dll.tail.prev is not None:
+            new_tail = dll.tail.prev
+            new_tail.next = None
+            dll.tail.prev = None
+            dll.tail = new_tail
+            dll.size -= 1
+
+    return deleted_node
+
+
+def delete_dll_head_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListNode]:
+    """
+    Delete the head (first) element from the doubly linked list.
+
+    This function removes the first node from the list and properly updates
+    the head reference and node connections. If the list becomes empty,
+    it is marked as uninitialized.
+
+    Args:
+        dll (DoublyLinkedList): The doubly linked list to delete from
+
+    Returns:
+        Optional[DoublyLinkedListNode]: The deleted node, or None if deletion failed
+
+    Raises:
+        ValueError: If the dll parameter is None, or if the list is not
+            initialized or is empty
+
+    Example:
+        >>> dll = DoublyLinkedList()
+        >>> initialize_dll(dll, "first")
+        >>> insert_dll_element(dll, "second")
+        >>> deleted = delete_dll_head_element(dll)
+        >>> print(deleted.data)  # Output: first
+        >>> print(dll.size)  # Output: 1
+    """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
+    if not dll.dll_initialized or dll.size == 0:
+        raise ValueError("DoublyLinkedList must be initialized and not empty")
+
+    deleted_node = dll.head
+
+    if dll.size == 1:
+        dll.head = None
+        dll.tail = None
+        dll.size = 0
+        dll.dll_initialized = False
+    else:
+        if dll.head.next is not None:
+            new_head = dll.head.next
+            new_head.prev = None
+            dll.head.next = None
+            dll.head = new_head
+            dll.size -= 1
+
+    return deleted_node
+
+
+def delete_dll_nth_element(
+    dll: DoublyLinkedList, index: int
+) -> Optional[DoublyLinkedListNode]:
+    """
+    Delete the element at the specified index from the doubly linked list.
+
+    This function removes the node at the given index and properly updates
+    the connections between surrounding nodes. The index is 1-based.
+
+    Args:
+        dll (DoublyLinkedList): The doubly linked list to delete from
+        index (int): The index of the element to delete (1-based)
+
+    Returns:
+        Optional[DoublyLinkedListNode]: The deleted node, or None if deletion failed
+
+    Raises:
+        ValueError: If the dll parameter is None, or if the list is not
+            initialized or is empty
+        IndexError: If the index is out of bounds
+
+    Example:
+        >>> dll = DoublyLinkedList()
+        >>> initialize_dll(dll, "first")
+        >>> insert_dll_element(dll, "second")
+        >>> insert_dll_element(dll, "third")
+        >>> deleted = delete_dll_nth_element(dll, 2)
+        >>> print(deleted.data)  # Output: second
+        >>> print(dll.size)  # Output: 2
+    """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
+    if not dll.dll_initialized or dll.size == 0:
+        raise ValueError("DoublyLinkedList must be initialized and not empty")
+
+    if index < 1 or index > dll.size:
+        raise IndexError("Index out of bounds")
+
+    # Handle deletion of the only element OR Handle deletion of the first element
+    if dll.size == 1 or index == 1:
+        return delete_dll_head_element(dll)
+
+    # Handle deletion of the last element
+    if index == dll.size:
+        return delete_dll_tail_element(dll)
+
+    # Handle deletion in the middle
+    current = dll.head
+    for _ in range(index - 1):
+        current = current.next if current else None
+
+    if current is not None and current.prev is not None and current.next is not None:
+        current.prev.next = current.next
+        current.next.prev = current.prev
+        current.next = None
+        current.prev = None
+        dll.size -= 1
+        return current
+
+    return None
+
+
+def delete_dll_multiple_elements(
+    dll: DoublyLinkedList, elements_with_indices: list[MultipleElementsHandler]
+) -> tuple[list[DoublyLinkedListNode], list[int]]:
+    """
+    Delete multiple elements at specified indices from the doubly linked list.
+
+    This function processes a list of handlers containing indices and deletes
+    the corresponding elements from the list. Elements are sorted by index
+    in descending order before deletion to maintain proper ordering.
+    Invalid indices are skipped.
+
+    Args:
+        dll (DoublyLinkedList): The doubly linked list to delete from
+        elements_with_indices (list[MultipleElementsHandler]): List of handlers
+            containing the indices of elements to delete
+
+    Returns:
+        tuple[list[DoublyLinkedListNode], list[int]]: A tuple containing:
+            - List of successfully deleted nodes
+            - List of indices that were skipped due to being out of bounds
+
+    Raises:
+        ValueError: If the dll parameter is None, or if the list is not
+            initialized or is empty
+
+    Example:
+        >>> dll = DoublyLinkedList()
+        >>> initialize_dll(dll, "first")
+        >>> insert_dll_element(dll, "second")
+        >>> insert_dll_element(dll, "third")
+        >>> handlers = [
+        ...     MultipleElementsHandler(index=1, element=""),
+        ...     MultipleElementsHandler(index=3, element="")
+        ... ]
+        >>> deleted, skipped = delete_dll_multiple_elements(dll, handlers)
+        >>> print(len(deleted))  # Output: 2
+        >>> print(dll.size)  # Output: 1
+    """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
+    if not dll.dll_initialized or dll.size == 0:
+        raise ValueError("DoublyLinkedList must be initialized and not empty")
+
+    # Sort in descending order to maintain proper indices during deletion
+    sorted_elements_with_indices = sorted(
+        elements_with_indices, key=lambda x: x.index, reverse=True
+    )
+
+    deleted: list[DoublyLinkedListNode] = []
+    skipped: list[int] = []
+
+    for handler in sorted_elements_with_indices:
+        if handler.index < 1 or handler.index > dll.size:
+            skipped.append(handler.index)
+            continue
+
+        # Use the single element deletion function for consistency
+        deleted_node = delete_dll_nth_element(dll, handler.index)
+        if deleted_node is not None:
+            deleted.append(deleted_node)
+        else:
+            skipped.append(handler.index)
+
+    return (deleted, skipped)
 
 
 def get_element_at_index(
@@ -350,237 +572,3 @@ def deep_clear_dll(dll: DoublyLinkedList):
     dll.tail = None
     dll.size = 0
     dll.dll_initialized = False
-
-
-def delete_dll_tail_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListNode]:
-    """
-    Delete the tail (last) element from the doubly linked list.
-
-    This function removes the last node from the list and properly updates
-    the tail reference and node connections. If the list becomes empty,
-    it is marked as uninitialized.
-
-    Args:
-        dll (DoublyLinkedList): The doubly linked list to delete from
-
-    Returns:
-        Optional[DoublyLinkedListNode]: The deleted node, or None if deletion failed
-
-    Raises:
-        ValueError: If the dll parameter is None, or if the list is not
-            initialized or is empty
-
-    Example:
-        >>> dll = DoublyLinkedList()
-        >>> initialize_dll(dll, "first")
-        >>> insert_dll_element(dll, "second")
-        >>> deleted = delete_dll_tail_element(dll)
-        >>> print(deleted.data)  # Output: second
-        >>> print(dll.size)  # Output: 1
-    """
-    if dll is None:
-        raise ValueError("DoublyLinkedList cannot be None")
-
-    if not dll.dll_initialized or dll.size == 0:
-        raise ValueError("DoublyLinkedList must be initialized and not empty")
-
-    deleted_node = dll.tail
-
-    if dll.size == 1:
-        dll.head = None
-        dll.tail = None
-        dll.size = 0
-        dll.dll_initialized = False
-    else:
-        if dll.tail is not None and dll.tail.prev is not None:
-            new_tail = dll.tail.prev
-            new_tail.next = None
-            dll.tail.prev = None
-            dll.tail = new_tail
-            dll.size -= 1
-
-    return deleted_node
-
-
-def delete_dll_head_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListNode]:
-    """
-    Delete the head (first) element from the doubly linked list.
-
-    This function removes the first node from the list and properly updates
-    the head reference and node connections. If the list becomes empty,
-    it is marked as uninitialized.
-
-    Args:
-        dll (DoublyLinkedList): The doubly linked list to delete from
-
-    Returns:
-        Optional[DoublyLinkedListNode]: The deleted node, or None if deletion failed
-
-    Raises:
-        ValueError: If the dll parameter is None, or if the list is not
-            initialized or is empty
-
-    Example:
-        >>> dll = DoublyLinkedList()
-        >>> initialize_dll(dll, "first")
-        >>> insert_dll_element(dll, "second")
-        >>> deleted = delete_dll_head_element(dll)
-        >>> print(deleted.data)  # Output: first
-        >>> print(dll.size)  # Output: 1
-    """
-    if dll is None:
-        raise ValueError("DoublyLinkedList cannot be None")
-
-    if not dll.dll_initialized or dll.size == 0:
-        raise ValueError("DoublyLinkedList must be initialized and not empty")
-
-    deleted_node = dll.head
-
-    if dll.size == 1:
-        dll.head = None
-        dll.tail = None
-        dll.size = 0
-        dll.dll_initialized = False
-    else:
-        if dll.head is not None and dll.head.next is not None:
-            new_head = dll.head.next
-            new_head.prev = None
-            dll.head.next = None
-            dll.head = new_head
-            dll.size -= 1
-
-    return deleted_node
-
-
-def delete_dll_nth_element(
-    dll: DoublyLinkedList, index: int
-) -> Optional[DoublyLinkedListNode]:
-    """
-    Delete the element at the specified index from the doubly linked list.
-
-    This function removes the node at the given index and properly updates
-    the connections between surrounding nodes. The index is 1-based.
-
-    Args:
-        dll (DoublyLinkedList): The doubly linked list to delete from
-        index (int): The index of the element to delete (1-based)
-
-    Returns:
-        Optional[DoublyLinkedListNode]: The deleted node, or None if deletion failed
-
-    Raises:
-        ValueError: If the dll parameter is None, or if the list is not
-            initialized or is empty
-        IndexError: If the index is out of bounds
-
-    Example:
-        >>> dll = DoublyLinkedList()
-        >>> initialize_dll(dll, "first")
-        >>> insert_dll_element(dll, "second")
-        >>> insert_dll_element(dll, "third")
-        >>> deleted = delete_dll_nth_element(dll, 2)
-        >>> print(deleted.data)  # Output: second
-        >>> print(dll.size)  # Output: 2
-    """
-    if dll is None:
-        raise ValueError("DoublyLinkedList cannot be None")
-
-    if not dll.dll_initialized or dll.size == 0:
-        raise ValueError("DoublyLinkedList must be initialized and not empty")
-
-    if index < 1 or index > dll.size:
-        raise IndexError("Index out of bounds")
-
-    # Handle deletion of the only element
-    if dll.size == 1:
-        return delete_dll_head_element(dll)
-
-    # Handle deletion of the first element
-    if index == 1:
-        return delete_dll_head_element(dll)
-
-    # Handle deletion of the last element
-    if index == dll.size:
-        return delete_dll_tail_element(dll)
-
-    # Handle deletion in the middle
-    current = dll.head
-    for _ in range(index - 1):
-        current = current.next if current else None
-
-    if current is not None and current.prev is not None and current.next is not None:
-        current.prev.next = current.next
-        current.next.prev = current.prev
-        current.next = None
-        current.prev = None
-        dll.size -= 1
-        return current
-
-    return None
-
-
-def delete_dll_multiple_elements(
-    dll: DoublyLinkedList, elements_with_indices: list[MultipleElementsHandler]
-) -> tuple[list[DoublyLinkedListNode], list[int]]:
-    """
-    Delete multiple elements at specified indices from the doubly linked list.
-
-    This function processes a list of handlers containing indices and deletes
-    the corresponding elements from the list. Elements are sorted by index
-    in descending order before deletion to maintain proper ordering.
-    Invalid indices are skipped.
-
-    Args:
-        dll (DoublyLinkedList): The doubly linked list to delete from
-        elements_with_indices (list[MultipleElementsHandler]): List of handlers
-            containing the indices of elements to delete
-
-    Returns:
-        tuple[list[DoublyLinkedListNode], list[int]]: A tuple containing:
-            - List of successfully deleted nodes
-            - List of indices that were skipped due to being out of bounds
-
-    Raises:
-        ValueError: If the dll parameter is None, or if the list is not
-            initialized or is empty
-
-    Example:
-        >>> dll = DoublyLinkedList()
-        >>> initialize_dll(dll, "first")
-        >>> insert_dll_element(dll, "second")
-        >>> insert_dll_element(dll, "third")
-        >>> handlers = [
-        ...     MultipleElementsHandler(index=1, element=""),
-        ...     MultipleElementsHandler(index=3, element="")
-        ... ]
-        >>> deleted, skipped = delete_dll_multiple_elements(dll, handlers)
-        >>> print(len(deleted))  # Output: 2
-        >>> print(dll.size)  # Output: 1
-    """
-    if dll is None:
-        raise ValueError("DoublyLinkedList cannot be None")
-
-    if not dll.dll_initialized or dll.size == 0:
-        raise ValueError("DoublyLinkedList must be initialized and not empty")
-
-    # Sort in descending order to maintain proper indices during deletion
-    sorted_elements_with_indices = sorted(
-        elements_with_indices, key=lambda x: x.index, reverse=True
-    )
-
-    deleted: list[DoublyLinkedListNode] = []
-    skipped: list[int] = []
-
-    for handler in sorted_elements_with_indices:
-        if handler.index < 1 or handler.index > dll.size:
-            skipped.append(handler.index)
-            continue
-
-        # Use the single element deletion function for consistency
-        deleted_node = delete_dll_nth_element(dll, handler.index)
-        if deleted_node is not None:
-            deleted.append(deleted_node)
-        else:
-            skipped.append(handler.index)
-
-    return (deleted, skipped)
