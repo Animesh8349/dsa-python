@@ -358,7 +358,8 @@ def shallow_clear_singly_linked_list(csll: CircularSinglyLinkedList) -> None:
         raise ValueError("Singly circular linked list cannot be Uninitialized")
 
     csll.head = None
-    csll.tail.next = None
+    if csll.tail:
+        csll.tail.next = None
     csll.tail = None
     csll.size = 0
     csll.csll_initialized = False
