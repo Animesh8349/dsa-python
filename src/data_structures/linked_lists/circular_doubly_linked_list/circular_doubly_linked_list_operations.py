@@ -63,12 +63,15 @@ def insert_cdll_element(
 
         if cdll.tail is not None:
             cdll.tail.next = new_node
-        else:
+        elif cdll.head is not None:
             cdll.head.next = new_node
 
         new_node.prev = cdll.tail
         new_node.next = cdll.head
-        cdll.head.prev = new_node
+
+        if cdll.head is not None:
+            cdll.head.prev = new_node
+
         cdll.tail = new_node
         cdll.size += 1
 
@@ -86,12 +89,13 @@ def insert_cdll_first_element(
 
     new_node = CircularDoublyLinkedListNode(element)
 
-    new_node.next = cdll.head
-    cdll.head.prev = new_node
-    cdll.head = new_node
-    cdll.tail.next = new_node
-    new_node.prev = cdll.tail
-    cdll.size += 1
+    if new_node is not None and cdll.head is not None and cdll.tail is not None:
+        new_node.next = cdll.head
+        cdll.head.prev = new_node
+        cdll.head = new_node
+        cdll.tail.next = new_node
+        new_node.prev = cdll.tail
+        cdll.size += 1
 
     return new_node
 
@@ -187,9 +191,10 @@ def delete_cdll_first_element(
     if not cdll.cdll_initialized or cdll.head is None:
         return None
 
+    deleted_node = cdll.head
+
     # Case 1: Single element in the list
     if cdll.size == 1:
-        deleted_node = cdll.head
         cdll.head = None
         cdll.tail = None
         cdll.size = 0
@@ -197,18 +202,19 @@ def delete_cdll_first_element(
 
         return deleted_node
 
-    cdll.head.next.prev = cdll.head.prev
-    cdll.tail.next = cdll.head.next
-    cdll.head = cdll.head.next
-    cdll.size -= 1
+    if cdll.head is not None and cdll.head.next is not None and cdll.tail is not None:
+        cdll.head.next.prev = cdll.head.prev
+        cdll.tail.next = cdll.head.next
+        cdll.head = cdll.head.next
+        cdll.size -= 1
 
-    if cdll.size == 1:
-        cdll.tail.next = None
-        cdll.head.prev = None
-    elif cdll.size == 0:
-        cdll.head = None
-        cdll.tail = None
-        cdll.cdll_initialized = False
+        if cdll.size == 1:
+            cdll.tail.next = None
+            cdll.head.prev = None
+        elif cdll.size == 0:
+            cdll.head = None
+            cdll.tail = None
+            cdll.cdll_initialized = False
 
     return deleted_node
 
@@ -246,8 +252,15 @@ def delete_cdll_last_element(
 
     # Delete the last node
     deleted_node = cdll.tail
-    deleted_node.next.prev = deleted_node.prev
-    deleted_node.prev.next = deleted_node.next
+
+    if (
+        deleted_node is not None
+        and deleted_node.next is not None
+        and deleted_node.prev is not None
+    ):
+        deleted_node.next.prev = deleted_node.prev
+        deleted_node.prev.next = deleted_node.next
+
     cdll.size -= 1
 
     if cdll.size == 1:
@@ -367,7 +380,10 @@ def shallow_clear_doubly_linked_list(cdll: CircularDoublyLinkedList) -> None:
         raise ValueError("Doubly circular linked list cannot be Uninitialized")
 
     cdll.head = None
-    cdll.tail.next = None
+
+    if cdll.tail is not None:
+        cdll.tail.next = None
+
     cdll.tail = None
     cdll.size = 0
     cdll.cdll_initialized = False
@@ -385,9 +401,9 @@ def deep_clear_doubly_linked_list(cdll: CircularDoublyLinkedList) -> None:
         current = next_node
         cdll.size -= 1
 
-        if cdll.size == 1:
+        if cdll.size == 1 and cdll.tail is not None:
             cdll.tail.next = None
-        else:
+        elif cdll.tail is not None:
             cdll.tail.next = current
 
     cdll.head = None

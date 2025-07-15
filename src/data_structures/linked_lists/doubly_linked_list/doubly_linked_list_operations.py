@@ -88,7 +88,7 @@ def insert_dll_element(
 
     new_node = DoublyLinkedListNode(data)
 
-    if dll.size == 1:
+    if dll.size == 1 and dll.head is not None:
         dll.head.next = new_node
         new_node.prev = dll.head
     else:
@@ -143,7 +143,19 @@ def insert_dll_nth_element(
 
     # Handle insertion at the beginning
     if index == 1:
-        return insert_dll_nth_element(dll, data, index)
+        new_node = DoublyLinkedListNode(data)
+        
+        if dll.head is not None:
+            new_node.next = dll.head
+            dll.head.prev = new_node
+        
+        dll.head = new_node
+        
+        if dll.size == 0:
+            dll.tail = new_node
+        
+        dll.size += 1
+        return new_node
 
     # Handle insertion at the end
     if index == dll.size + 1:
@@ -270,7 +282,7 @@ def delete_dll_tail_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListN
         dll.size = 0
         dll.dll_initialized = False
     else:
-        if dll.tail.prev is not None:
+        if dll.tail is not None and dll.tail.prev is not None:
             new_tail = dll.tail.prev
             new_tail.next = None
             dll.tail.prev = None
@@ -320,7 +332,7 @@ def delete_dll_head_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListN
         dll.size = 0
         dll.dll_initialized = False
     else:
-        if dll.head.next is not None:
+        if dll.head is not None and dll.head.next is not None:
             new_head = dll.head.next
             new_head.prev = None
             dll.head.next = None
