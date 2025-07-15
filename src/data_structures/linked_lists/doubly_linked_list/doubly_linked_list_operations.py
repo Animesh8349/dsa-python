@@ -86,19 +86,18 @@ def insert_dll_element(
         new_node = initialize_dll(dll, data)
         return new_node
 
+    new_node = DoublyLinkedListNode(data)
+
     if dll.size == 1 and dll.head is not None:
-        new_node = DoublyLinkedListNode(data)
         dll.head.next = new_node
         new_node.prev = dll.head
-        dll.tail = new_node
-        dll.size += 1
     else:
         if dll.tail is not None:
-            new_node = DoublyLinkedListNode(data)
             dll.tail.next = new_node
             new_node.prev = dll.tail
-            dll.tail = new_node
-            dll.size += 1
+
+    dll.tail = new_node
+    dll.size += 1
 
     return new_node
 
@@ -145,12 +144,16 @@ def insert_dll_nth_element(
     # Handle insertion at the beginning
     if index == 1:
         new_node = DoublyLinkedListNode(data)
+        
         if dll.head is not None:
             new_node.next = dll.head
             dll.head.prev = new_node
+        
         dll.head = new_node
+        
         if dll.size == 0:
             dll.tail = new_node
+        
         dll.size += 1
         return new_node
 
@@ -160,6 +163,7 @@ def insert_dll_nth_element(
 
     # Handle insertion in the middle
     current = dll.head
+
     for _ in range(index - 2):
         current = current.next if current else None
 
@@ -236,120 +240,6 @@ def insert_dll_multiple_elements(
             skipped.append(handler.index)
 
     return (inserted, skipped)
-
-
-def get_element_at_index(
-    dll: DoublyLinkedList, index: int
-) -> Optional[DoublyLinkedListNode]:
-    """
-    Get the node at the specified index in the doubly linked list.
-
-    This function traverses the list to find and return the node at the
-    given index. The index is 1-based.
-
-    Args:
-        dll (DoublyLinkedList): The doubly linked list to access
-        index (int): The index of the element to retrieve (1-based)
-
-    Returns:
-        Optional[DoublyLinkedListNode]: The node at the specified index,
-            or None if the index is out of bounds
-
-    Raises:
-        ValueError: If the dll parameter is None or list is not initialized
-
-    Example:
-        >>> dll = DoublyLinkedList()
-        >>> initialize_dll(dll, "first")
-        >>> insert_dll_element(dll, "second")
-        >>> node = get_element_at_index(dll, 2)
-        >>> print(node.data)  # Output: second
-    """
-    if dll is None:
-        raise ValueError("DoublyLinkedList cannot be None")
-
-    if not dll.dll_initialized:
-        raise ValueError(
-            "DoublyLinkedList must be initialized before accessing elements"
-        )
-
-    if index < 1 or index > dll.size:
-        return None
-
-    current = dll.head
-
-    for _ in range(index - 1):
-        if current is not None:
-            current = current.next
-
-    return current
-
-
-def shallow_clear_dll(dll: DoublyLinkedList):
-    """
-    Perform a shallow clear of the doubly linked list.
-
-    This function resets the list structure by setting head and tail to None,
-    resetting size to 0, and marking the list as uninitialized. It does not
-    explicitly break node connections, relying on garbage collection.
-
-    Args:
-        dll (DoublyLinkedList): The doubly linked list to clear
-
-    Raises:
-        ValueError: If the dll parameter is None
-
-    Example:
-        >>> dll = DoublyLinkedList()
-        >>> initialize_dll(dll, "data")
-        >>> shallow_clear_dll(dll)
-        >>> print(dll.size)  # Output: 0
-    """
-    if dll is None:
-        raise ValueError("DoublyLinkedList cannot be None")
-
-    dll.head = None
-    dll.tail = None
-    dll.size = 0
-    dll.dll_initialized = False
-
-
-def deep_clear_dll(dll: DoublyLinkedList):
-    """
-    Perform a deep clear of the doubly linked list.
-
-    This function traverses the entire list and explicitly breaks all node
-    connections (both forward and backward links) before clearing the list
-    structure. This ensures proper cleanup and prevents memory leaks.
-
-    Args:
-        dll (DoublyLinkedList): The doubly linked list to clear
-
-    Raises:
-        ValueError: If the dll parameter is None
-
-    Example:
-        >>> dll = DoublyLinkedList()
-        >>> initialize_dll(dll, "data")
-        >>> insert_dll_element(dll, "more_data")
-        >>> deep_clear_dll(dll)
-        >>> print(dll.size)  # Output: 0
-    """
-    if dll is None:
-        raise ValueError("DoublyLinkedList cannot be None")
-
-    current = dll.head
-    while current is not None:
-        next_node = current.next
-        current.prev = None
-        current.next = None
-        current = next_node
-
-    # Properly reset the list
-    dll.head = None
-    dll.tail = None
-    dll.size = 0
-    dll.dll_initialized = False
 
 
 def delete_dll_tail_element(dll: DoublyLinkedList) -> Optional[DoublyLinkedListNode]:
@@ -491,12 +381,8 @@ def delete_dll_nth_element(
     if index < 1 or index > dll.size:
         raise IndexError("Index out of bounds")
 
-    # Handle deletion of the only element
-    if dll.size == 1:
-        return delete_dll_head_element(dll)
-
-    # Handle deletion of the first element
-    if index == 1:
+    # Handle deletion of the only element OR Handle deletion of the first element
+    if dll.size == 1 or index == 1:
         return delete_dll_head_element(dll)
 
     # Handle deletion of the last element
@@ -584,3 +470,117 @@ def delete_dll_multiple_elements(
             skipped.append(handler.index)
 
     return (deleted, skipped)
+
+
+def get_element_at_index(
+    dll: DoublyLinkedList, index: int
+) -> Optional[DoublyLinkedListNode]:
+    """
+    Get the node at the specified index in the doubly linked list.
+
+    This function traverses the list to find and return the node at the
+    given index. The index is 1-based.
+
+    Args:
+        dll (DoublyLinkedList): The doubly linked list to access
+        index (int): The index of the element to retrieve (1-based)
+
+    Returns:
+        Optional[DoublyLinkedListNode]: The node at the specified index,
+            or None if the index is out of bounds
+
+    Raises:
+        ValueError: If the dll parameter is None or list is not initialized
+
+    Example:
+        >>> dll = DoublyLinkedList()
+        >>> initialize_dll(dll, "first")
+        >>> insert_dll_element(dll, "second")
+        >>> node = get_element_at_index(dll, 2)
+        >>> print(node.data)  # Output: second
+    """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
+    if not dll.dll_initialized:
+        raise ValueError(
+            "DoublyLinkedList must be initialized before accessing elements"
+        )
+
+    if index < 1 or index > dll.size:
+        return None
+
+    current = dll.head
+
+    for _ in range(index - 1):
+        if current is not None:
+            current = current.next
+
+    return current
+
+
+def shallow_clear_dll(dll: DoublyLinkedList):
+    """
+    Perform a shallow clear of the doubly linked list.
+
+    This function resets the list structure by setting head and tail to None,
+    resetting size to 0, and marking the list as uninitialized. It does not
+    explicitly break node connections, relying on garbage collection.
+
+    Args:
+        dll (DoublyLinkedList): The doubly linked list to clear
+
+    Raises:
+        ValueError: If the dll parameter is None
+
+    Example:
+        >>> dll = DoublyLinkedList()
+        >>> initialize_dll(dll, "data")
+        >>> shallow_clear_dll(dll)
+        >>> print(dll.size)  # Output: 0
+    """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
+    dll.head = None
+    dll.tail = None
+    dll.size = 0
+    dll.dll_initialized = False
+
+
+def deep_clear_dll(dll: DoublyLinkedList):
+    """
+    Perform a deep clear of the doubly linked list.
+
+    This function traverses the entire list and explicitly breaks all node
+    connections (both forward and backward links) before clearing the list
+    structure. This ensures proper cleanup and prevents memory leaks.
+
+    Args:
+        dll (DoublyLinkedList): The doubly linked list to clear
+
+    Raises:
+        ValueError: If the dll parameter is None
+
+    Example:
+        >>> dll = DoublyLinkedList()
+        >>> initialize_dll(dll, "data")
+        >>> insert_dll_element(dll, "more_data")
+        >>> deep_clear_dll(dll)
+        >>> print(dll.size)  # Output: 0
+    """
+    if dll is None:
+        raise ValueError("DoublyLinkedList cannot be None")
+
+    current = dll.head
+    while current is not None:
+        next_node = current.next
+        current.prev = None
+        current.next = None
+        current = next_node
+
+    # Properly reset the list
+    dll.head = None
+    dll.tail = None
+    dll.size = 0
+    dll.dll_initialized = False
