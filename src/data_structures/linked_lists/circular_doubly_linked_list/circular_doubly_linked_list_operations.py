@@ -401,6 +401,7 @@ def deep_clear_doubly_linked_list(cdll: CircularDoublyLinkedList) -> None:
     while current:
         next_node = current.next
         current.next = None
+        current.prev = None
         current = next_node
         cdll.size -= 1
 
