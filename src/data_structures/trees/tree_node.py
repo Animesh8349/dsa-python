@@ -1,19 +1,53 @@
+from typing import Any
+
+
 class TreeNode:
-    def _init_(self, children: list | None = None):
-        self.children = children
-        self.isParent = False
-        self.isRoot = False
-        self.isLeaf = False
-        self.isLeft = False
-        self.isRight = False
+    def __init__(
+        self,
+        data: Any,
+        children_nodes: list["TreeNode"] | None = None,
+    ):
+        self.data = data
+        self.children_nodes = children_nodes if children_nodes is not None else []
+        self.is_root = False
+        self.is_parent = False
+        self.is_left = False
+        self.is_right = False
+        self.is_leaf = False
 
 
 class BinaryTreeNode:
-    def __init__(self, leftChild: "BinaryTreeNode | None" = None, rightChild: "BinaryTreeNode | None" = None):
-        self.leftChild = leftChild
-        self.rightChild = rightChild
-        self.isRight = False
-        self.isLeft = False
-        self.isRoot = False
-        self.isParent = False
-        self.isLeaf = False
+    def __init__(
+        self,
+        data: Any,
+        left_child: "BinaryTreeNode | None" = None,
+        right_child: "BinaryTreeNode | None" = None,
+    ):
+        self.data = data
+        self.left_child = left_child
+        self.right_child = right_child
+        self.is_root = False
+        self.is_parent = False
+        self.is_left = False
+        self.is_right = False
+        self.is_leaf = False
+
+
+class TernaryTreeNode:
+    def __init__(
+        self,
+        data: Any,
+        left_child: "TernaryTreeNode | None" = None,
+        middle_child: "TernaryTreeNode | None" = None,
+        right_child: "TernaryTreeNode | None" = None,
+    ):
+        self.data = data
+        self.left_child = left_child
+        self.middle_child = middle_child
+        self.right_child = right_child
+        self.is_root = False
+        self.is_parent = False
+        self.is_left = False
+        self.is_middle = False
+        self.is_right = False
+        self.is_leaf = False
