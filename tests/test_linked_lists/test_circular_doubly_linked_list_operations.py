@@ -22,8 +22,10 @@ def test_initialize_and_insertions():
     node = initialize_cdll(cdll, "start")
     assert cdll.head == node and cdll.tail == node
     assert cdll.size == 1
-    assert cdll.head.next == cdll.head and isinstance(
-        cdll.head.prev, CircularDoublyLinkedListNode
+    assert (
+        cdll.head is not None
+        and cdll.head.next == cdll.head
+        and isinstance(cdll.head.prev, CircularDoublyLinkedListNode)
     )
 
 
@@ -33,8 +35,8 @@ def test_insert_at_end_and_start():
     insert_cdll_element(cdll, "end")
     insert_cdll_first_element(cdll, "start")
     assert cdll.size == 3
-    assert cdll.head.data == "start"
-    assert cdll.tail.data == "end"
+    assert cdll.head is not None and cdll.head.data == "start"
+    assert cdll.tail is not None and cdll.tail.data == "end"
 
 
 def test_insert_nth_and_get_element():
@@ -42,7 +44,8 @@ def test_insert_nth_and_get_element():
     initialize_cdll(cdll, "first")
     insert_cdll_element(cdll, "third")
     insert_cdll_nth_element(cdll, "second", 2)
-    assert get_element_at_index(2, cdll).data == "second"
+    elem = get_element_at_index(2, cdll)
+    assert elem is not None and elem.data == "second"
 
 
 def test_invalid_insertions():
@@ -60,11 +63,11 @@ def test_deletions():
     insert_cdll_element(cdll, "two")
     insert_cdll_element(cdll, "three")
     deleted = delete_cdll_nth_element(cdll, 2)
-    assert deleted.data == "two"
+    assert deleted is not None and deleted.data == "two"
     deleted = delete_cdll_last_element(cdll)
-    assert deleted.data == "three"
+    assert deleted is not None and deleted.data == "three"
     deleted = delete_cdll_first_element(cdll)
-    assert deleted.data == "one"
+    assert deleted is not None and deleted.data == "one"
     assert cdll.size == 0
 
 

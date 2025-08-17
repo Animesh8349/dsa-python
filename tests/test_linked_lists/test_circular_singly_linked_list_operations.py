@@ -22,9 +22,9 @@ def test_initialize_and_basic_insertions():
     assert csll.head == node1 and csll.tail == node1
     assert csll.size == 1
     node2 = insert_csll_element(csll, "second")
-    assert csll.tail.data == "second"
+    assert csll.tail is not None and csll.tail.data == "second"
     node3 = insert_csll_first_element(csll, "first")
-    assert csll.head.data == "first"
+    assert csll.head is not None and csll.head.data == "first"
     assert csll.size == 3
 
 
@@ -35,7 +35,8 @@ def test_insert_nth_element():
     node = insert_csll_nth_element(csll, "second", 2)
     assert node.data == "second"
     assert csll.size == 3
-    assert get_element_at_index(2, csll).data == "second"
+    elem = get_element_at_index(2, csll)
+    assert elem is not None and elem.data == "second"
 
 
 def test_insert_nth_invalid():
@@ -52,8 +53,10 @@ def test_get_element():
     initialize_csll(csll, "one")
     insert_csll_element(csll, "two")
     insert_csll_element(csll, "three")
-    assert get_element_at_index(1, csll).data == "one"
-    assert get_element_at_index(3, csll).data == "three"
+    elem = get_element_at_index(1, csll)
+    assert elem is not None and elem.data == "two"
+    elem = get_element_at_index(3, csll)
+    assert elem is not None and elem.data == "three"
     with pytest.raises(IndexError):
         get_element_at_index(4, csll)
 
@@ -66,9 +69,9 @@ def test_delete_elements():
     delete_csll_nth_element(csll, 2)
     assert csll.size == 2
     deleted = delete_csll_last_element(csll)
-    assert deleted.data == "three"
+    assert deleted is not None and deleted.data == "three"
     deleted = delete_csll_first_element(csll)
-    assert deleted.data == "one"
+    assert deleted is not None and deleted.data == "one"
     assert csll.size == 0
 
 
