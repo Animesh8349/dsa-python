@@ -20,7 +20,7 @@ pytest-benchmark = "^5.1.0"
 hypothesis = "^6.135.29"
 black = "^25.1.0"
 flake8 = "^7.3.0"
-mypy = "^1.16.1"
+mypy = "^1.17.1"
 
 [build-system]
 requires = ["poetry-core"]
