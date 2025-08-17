@@ -22,7 +22,7 @@ class BinaryTreeNode:
     def __init__(
         self,
         data: Any,
-        parent: "TreeNode | None" = None,
+        parent: "BinaryTreeNode | None" = None,
         left_child: "BinaryTreeNode | None" = None,
         right_child: "BinaryTreeNode | None" = None,
     ):
@@ -41,7 +41,7 @@ class TernaryTreeNode:
     def __init__(
         self,
         data: Any,
-        parent: "TreeNode | None" = None,
+        parent: "TernaryTreeNode | None" = None,
         left_child: "TernaryTreeNode | None" = None,
         middle_child: "TernaryTreeNode | None" = None,
         right_child: "TernaryTreeNode | None" = None,

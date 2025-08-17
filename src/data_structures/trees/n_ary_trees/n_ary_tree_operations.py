@@ -21,10 +21,10 @@ def create_root(data: Any, children: list[TreeNode] | None = None) -> TreeNode:
         >>> print(root.is_root)  # True
         >>> print(root.data)  # "root_data"
     """
-    root = TreeNode(data, parent=None, children_nodes=children or [])  # ✅ Ensure list
+    root = TreeNode(data, parent=None, children_nodes=children or [])  #  Ensure list
     root.is_root = True
 
-    if children:  # ✅ Only set is_parent if there are actually children
+    if children:  #  Only set is_parent if there are actually children
         root.is_parent = True
         # Update parent references
         for child in children:
@@ -50,8 +50,8 @@ def create_root_with_children_data_list(
         TreeNode: The created root node with children attached
 
     Note:
-        Children nodes will have children_nodes=None, which may cause issues
-        if further children are added later.
+        Children nodes are initialized with children_nodes=[], so they are ready
+        to accept further children if needed.
 
     Example:
         >>> root = create_root_with_children_data_list("root", ["child1", "child2"])
@@ -65,7 +65,7 @@ def create_root_with_children_data_list(
     if children_data_list:
         for child_data in children_data_list:
             if child_data:
-                child = TreeNode(child_data, root, [])  # ✅ Use [] instead of None
+                child = TreeNode(child_data, root, [])  #  Use [] instead of None
                 root.children_nodes.append(child)
 
     return root
@@ -132,13 +132,13 @@ def add_child_node(parent_node: TreeNode, child_node_data: Any) -> TreeNode | No
         raise ValueError("Parent node cannot be None")
 
     if parent_node.children_nodes is None:
-        parent_node.children_nodes = []  # ✅ Initialize if None
+        parent_node.children_nodes = []  #  Initialize if None
 
     if child_node_data:
         child_node = TreeNode(child_node_data, parent=parent_node, children_nodes=[])
         parent_node.children_nodes.append(child_node)
 
-        if not parent_node.is_parent:  # ✅ Update parent flag
+        if not parent_node.is_parent:  #  Update parent flag
             parent_node.is_parent = True
 
         return child_node
@@ -172,7 +172,8 @@ def add_child_nodes(
 
     for child_data in children_data:
         child_node = add_child_node(parent_node, child_data)
-        added_children.append(child_node)
+        if child_node is not None:
+            added_children.append(child_node)
 
     return added_children if added_children else None
 
@@ -257,13 +258,13 @@ def add_child_nodes_from_index(
             child_node = TreeNode(
                 child_node_data,
                 parent=parent_node,
-                children_nodes=[],  # ✅ Use [] instead of None
+                children_nodes=[],  #  Use [] instead of None
             )
             parent_node.children_nodes.insert(count, child_node)
             count += 1
             added_children.append(child_node)
 
-        if not parent_node.is_parent:  # ✅ Update parent flag
+        if not parent_node.is_parent:  #  Update parent flag
             parent_node.is_parent = True
 
     return added_children if added_children else None
@@ -294,9 +295,9 @@ def pre_order_traversal(root: TreeNode, result: list[Any]) -> list[Any] | None:
 
     result.append(root.data)
 
-    if root.children_nodes:  # ✅ Check for None and non-empty
+    if root.children_nodes:  #  Check for None and non-empty
         for child in root.children_nodes:
-            pre_order_traversal(child, result)  # ✅ No reassignment needed
+            pre_order_traversal(child, result)  #  No reassignment needed
 
     return result
 
@@ -324,12 +325,12 @@ def post_order_traversal(root: TreeNode, result: list[Any]) -> list[Any] | None:
     if root is None:
         return None
 
-    if root.children_nodes:  # ✅ Check for None and non-empty
+    if root.children_nodes:  #  Check for None and non-empty
         for child in root.children_nodes:
             post_order_traversal(child, result)
 
     result.append(root.data)
-    return result  # ✅ Always return result
+    return result  #  Always return result
 
 
 def level_order_traversal(root: TreeNode, result: list[Any]) -> list[Any] | None:
@@ -361,8 +362,9 @@ def level_order_traversal(root: TreeNode, result: list[Any]) -> list[Any] | None
             current = queue.pop(0)
             result.append(current.data)
 
-            for child in current.children_nodes:
-                queue.append(child)
+            if current.children_nodes:
+                for child in current.children_nodes:
+                    queue.append(child)
 
     return result
 
@@ -402,8 +404,9 @@ def breadth_first_search(root: TreeNode, target: Any) -> TreeNode | None:
             if current.data == target:
                 return current
             else:
-                for child in current.children_nodes:
-                    queue.append(child)
+                if current.children_nodes:
+                    for child in current.children_nodes:
+                        queue.append(child)
 
     return None
 
@@ -438,11 +441,12 @@ def depth_first_search(root: TreeNode, target: Any) -> TreeNode | None:
         if root.data == target:
             return root
         else:
-            for child in root.children_nodes:
-                result = depth_first_search(child, target)
+            if root.children_nodes:
+                for child in root.children_nodes:
+                    result = depth_first_search(child, target)
 
-                if result is not None:
-                    return result
+                    if result is not None:
+                        return result
 
     return None
 
@@ -526,7 +530,7 @@ def search_and_remove_nodes(
     removed_nodes = []
 
     for target in targets:
-        # ✅ Use the corrected single removal function
+        #  Use the corrected single removal function
         removed_node = search_and_remove_node(root, target)
         if removed_node is not None:
             removed_nodes.append(removed_node)
