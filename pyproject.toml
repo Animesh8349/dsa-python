@@ -12,7 +12,7 @@ python = "^3.13"
 graphviz = "^0.21"
 ipython = "^9.4.0"
 jupyter = "^1.1.1"
-matplotlib = "^3.10.3"
+matplotlib = "^3.10.5"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
